@@ -6,7 +6,7 @@ public class NetworkSetup : MonoBehaviour
 {
     public GameObject spyPrefab;
     public GameObject sniperPrefab;
-    public Button hostButton;  // ✅ Normal UI Button
+    public Button hostButton;
     public Button clientButton;
 
     private void Start()
@@ -40,14 +40,11 @@ public class NetworkSetup : MonoBehaviour
     {
         if (!NetworkManager.Singleton.IsServer) return; // ✅ Only the server should spawn players
 
-        if (NetworkManager.Singleton.ConnectedClientsList.Count == 1)
-        {
-            SpawnPlayer(clientId, true); // First player = Spy
-        }
-        else
-        {
-            SpawnPlayer(clientId, false); // Second player = Sniper
-        }
+        // Ensure each client only spawns once
+        if (!NetworkManager.Singleton.ConnectedClients.ContainsKey(clientId)) return;
+
+        bool isSpy = (NetworkManager.Singleton.ConnectedClientsList.Count == 1);
+        SpawnPlayer(clientId, isSpy);
     }
 
     private void SpawnPlayer(ulong clientId, bool isSpy)
@@ -55,7 +52,25 @@ public class NetworkSetup : MonoBehaviour
         GameObject playerPrefab = isSpy ? spyPrefab : sniperPrefab;
         GameObject playerInstance = Instantiate(playerPrefab, GetSpawnPosition(isSpy), Quaternion.identity);
         playerInstance.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
+
+        // Get the NetworkBehaviour script (SniperLook or SpyMovement)
+        NetworkBehaviour playerScript = playerInstance.GetComponent<NetworkBehaviour>();
+
+        if (playerScript.IsOwner) // Only the owner should see their UI
+        {
+            if (isSpy)
+            {
+                playerInstance.transform.Find("SpyCanvas")?.gameObject.SetActive(true);
+                playerInstance.transform.Find("SniperCanvas")?.gameObject.SetActive(false);
+            }
+            else
+            {
+                playerInstance.transform.Find("SniperCanvas")?.gameObject.SetActive(true);
+                playerInstance.transform.Find("SpyCanvas")?.gameObject.SetActive(false);
+            }
+        }
     }
+
 
     private Vector3 GetSpawnPosition(bool isSpy)
     {
