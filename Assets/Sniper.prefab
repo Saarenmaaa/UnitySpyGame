@@ -105,7 +105,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5590958555098336014}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 20, y: 7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -114,7 +114,7 @@ Transform:
   - {fileID: 2139079778405509046}
   - {fileID: 7849779373287717640}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &6659551659438281547
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -251,7 +251,7 @@ MonoBehaviour:
   sniperCamera: {fileID: 2129003013026646039}
   sniperAudio: {fileID: 0}
   sniperScopeUI: {fileID: 3774193935528442635}
-  sniperCanvas: {fileID: 8974062152710891141}
+  sniperCanvas: {fileID: 0}
   zoomedFOV: 15
   normalFOV: 60
   zoomSpeed: 5

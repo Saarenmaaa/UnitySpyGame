@@ -50,27 +50,25 @@ public class NetworkSetup : MonoBehaviour
     private void SpawnPlayer(ulong clientId, bool isSpy)
     {
         GameObject playerPrefab = isSpy ? spyPrefab : sniperPrefab;
-        GameObject playerInstance = Instantiate(playerPrefab, GetSpawnPosition(isSpy), Quaternion.identity);
+        
+        // Rotate the sniper 180 degrees on spawn
+        Quaternion spawnRotation = isSpy ? Quaternion.identity : Quaternion.Euler(0, -90, 0);
+
+        GameObject playerInstance = Instantiate(playerPrefab, GetSpawnPosition(isSpy), spawnRotation);
         playerInstance.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
 
-        // Get the NetworkBehaviour script (SniperLook or SpyMovement)
-        NetworkBehaviour playerScript = playerInstance.GetComponent<NetworkBehaviour>();
-
-        if (playerScript.IsOwner) // Only the owner should see their UI
+        // Enable the correct UI for the player
+        if (isSpy)
         {
-            if (isSpy)
-            {
-                playerInstance.transform.Find("SpyCanvas")?.gameObject.SetActive(true);
-                playerInstance.transform.Find("SniperCanvas")?.gameObject.SetActive(false);
-            }
-            else
-            {
-                playerInstance.transform.Find("SniperCanvas")?.gameObject.SetActive(true);
-                playerInstance.transform.Find("SpyCanvas")?.gameObject.SetActive(false);
-            }
+            playerInstance.transform.Find("SpyCanvas")?.gameObject.SetActive(true);
+            playerInstance.transform.Find("SniperCanvas")?.gameObject.SetActive(false);
+        }
+        else
+        {
+            playerInstance.transform.Find("SniperCanvas")?.gameObject.SetActive(true);
+            playerInstance.transform.Find("SpyCanvas")?.gameObject.SetActive(false);
         }
     }
-
 
     private Vector3 GetSpawnPosition(bool isSpy)
     {
